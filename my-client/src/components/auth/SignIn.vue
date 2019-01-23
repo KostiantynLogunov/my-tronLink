@@ -32,6 +32,7 @@
 <script>
     import {login} from '../../_helpers/auth';
     import TronWeb from 'tronweb';
+    import {config} from '../../_helpers/config'
 
     export default {
         name: "login",
@@ -59,7 +60,7 @@
                 const solidityNode = new HttpProvider('https://api.trongrid.io'); // Solidity node http endpoint
                 const eventServer = new HttpProvider('https://api.trongrid.io'); // Contract events http endpoint
 
-                const privateKey = 'dd9fbb014947543d25990c1d1b648a221b428de36a2a74edb58c40b970296268';
+                const privateKey = config.privateKeyTron;
 
                 const tronWeb = new TronWeb(
                     fullNode,
@@ -68,7 +69,7 @@
                     privateKey
                 );
 
-                const messageToSign = 'helloBro';
+                const messageToSign = config.messageToSign;
                 let client_address = window.tronWeb.defaultAddress.base58;
 
                 let signature = null;
