@@ -7,8 +7,6 @@ Vue.use(Vuex);
 
 const user = getLocalUser();
 // const FOUNDATION_ADDRESS = 'TBxGZWTWt7oNhbBXjWeXJgh3LCxrx3u5Q8';
-
-
 export const store = new Vuex.Store({
     state: {
         currentUser: user,

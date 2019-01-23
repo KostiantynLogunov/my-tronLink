@@ -31,6 +31,7 @@
 
 <script>
     import {login} from '../../_helpers/auth';
+    import TronWeb from 'tronweb';
 
     export default {
         name: "login",
@@ -52,26 +53,53 @@
         },
         methods: {
 
-
             authenticate() {
-                this.$store.dispatch('login');
+                const HttpProvider = TronWeb.providers.HttpProvider;
+                const fullNode = new HttpProvider('https://api.trongrid.io'); // Full node http endpoint
+                const solidityNode = new HttpProvider('https://api.trongrid.io'); // Solidity node http endpoint
+                const eventServer = new HttpProvider('https://api.trongrid.io'); // Contract events http endpoint
+
+                const privateKey = 'dd9fbb014947543d25990c1d1b648a221b428de36a2a74edb58c40b970296268';
+
+                const tronWeb = new TronWeb(
+                    fullNode,
+                    solidityNode,
+                    eventServer,
+                    privateKey
+                );
+
+                const messageToSign = 'helloBro';
                 let client_address = window.tronWeb.defaultAddress.base58;
-                // console.log(client_address);
 
-                    if (client_address) {
-                        login({
-                            address: client_address
+                let signature = null;
+                let check = false;
+                tronWeb.trx.sign(tronWeb.toHex(messageToSign), (err,res) => {
+                    signature = res;
+                });
+                console.log(signature);
+                tronWeb.trx.verifyMessage(tronWeb.toHex(messageToSign), signature, client_address, (err,res) => {
+                    check = res;
+                    console.log(check);
+                });
+
+
+                if (check && client_address) {
+                    this.$store.dispatch('login');
+
+                    console.log();
+
+                    login({
+                        address: client_address
+                    })
+                        .then((res) => {
+                            // console.log(res)
+                            this.$store.commit("loginSuccess", res);
+                            this.$router.push({path: '/'});
                         })
-                            .then((res) => {
-                                // console.log(res)
-                                this.$store.commit("loginSuccess", res);
-                                this.$router.push({path: '/'});
-                            })
-                            .catch((error) => {
-                                this.$store.commit("loginFailed", {error});
-                            });
-                    }
-
+                        .catch((error) => {
+                            this.$store.commit("loginFailed", {error});
+                        });
+                }
             }
         }
     }

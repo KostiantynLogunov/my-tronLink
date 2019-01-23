@@ -84,7 +84,10 @@
             currentUser() {
                 this.newname = this.$store.getters.currentUser.username;
                 return this.$store.getters.currentUser
-            }
+            },
+            /*tronWeb() {
+                return this.$store.state.tronWeb
+            }*/
         },
         methods: {
             showInputNewName(){

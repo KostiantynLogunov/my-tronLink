@@ -12,6 +12,7 @@ module.exports = (webSocketServer) => {
             clients[key].send(message);
         }*/
         console.log("NEW connection with --- " + userAddress);
+        console.log(webSocketServer.clients);
 
         /*ws.on('message', function(message) {
         });*/
