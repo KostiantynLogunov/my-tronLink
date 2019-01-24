@@ -31,7 +31,6 @@
 
 <script>
     import {login} from '../../_helpers/auth';
-    import TronWeb from 'tronweb';
     import {config} from '../../_helpers/config'
 
     export default {
@@ -55,42 +54,23 @@
         methods: {
 
             authenticate() {
-                const HttpProvider = TronWeb.providers.HttpProvider;
-                const fullNode = new HttpProvider('https://api.trongrid.io'); // Full node http endpoint
-                const solidityNode = new HttpProvider('https://api.trongrid.io'); // Solidity node http endpoint
-                const eventServer = new HttpProvider('https://api.trongrid.io'); // Contract events http endpoint
-
-                const privateKey = config.privateKeyTron;
-
-                const tronWeb = new TronWeb(
-                    fullNode,
-                    solidityNode,
-                    eventServer,
-                    privateKey
-                );
 
                 const messageToSign = config.messageToSign;
                 let client_address = window.tronWeb.defaultAddress.base58;
 
                 let signature = null;
-                let check = false;
-                tronWeb.trx.sign(tronWeb.toHex(messageToSign), (err,res) => {
+                // let check = false;
+                window.tronWeb.trx.sign(window.tronWeb.toHex(messageToSign), (err,res) => {
                     signature = res;
-                });
-                console.log(signature);
-                tronWeb.trx.verifyMessage(tronWeb.toHex(messageToSign), signature, client_address, (err,res) => {
-                    check = res;
-                    console.log(check);
-                });
+                    // console.log('signature: ',signature)
 
-
-                if (check && client_address) {
+                if (client_address && signature && client_address) {
                     this.$store.dispatch('login');
 
-                    console.log();
-
                     login({
-                        address: client_address
+                        address: client_address,
+                        signature: signature,
+                        messageToSign: messageToSign,
                     })
                         .then((res) => {
                             // console.log(res)
@@ -101,6 +81,7 @@
                             this.$store.commit("loginFailed", {error});
                         });
                 }
+                });
             }
         }
     }
